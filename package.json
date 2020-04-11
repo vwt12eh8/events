@@ -1,6 +1,6 @@
 {
   "name": "@vwt12eh8/events",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "license": "Unlicense",
   "repository": {
@@ -21,7 +21,7 @@
     "test": "mocha test.js"
   },
   "dependencies": {
-    "@vwt12eh8/cancel": "^1.0.0",
+    "@vwt12eh8/cancel": "^1.0.3",
     "ts-deferred": "^1.0.4"
   },
   "devDependencies": {
