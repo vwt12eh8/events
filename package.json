@@ -21,7 +21,7 @@
     "test": "mocha test.js"
   },
   "dependencies": {
-    "@vwt12eh8/cancel": "^1.0.3",
+    "@vwt12eh8/cancel": "^1.1.0",
     "ts-deferred": "^1.0.4"
   },
   "devDependencies": {

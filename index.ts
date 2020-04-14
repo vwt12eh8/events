@@ -19,11 +19,11 @@ export class EventDefine<T extends any[]> {
         const deferred = new Deferred<R>();
         const f = listener.bind(listener, deferred);
         try {
-            cancel?.onCancelled(deferred.reject);
+            cancel?.once(deferred.reject);
             this.on(f);
             return await deferred.promise;
         } finally {
-            cancel?.offCancelled(deferred.reject);
+            cancel?.off(deferred.reject);
             this.off(f);
         }
     }
@@ -44,11 +44,11 @@ export class EventDefine<T extends any[]> {
         const deferred = new Deferred<T>();
         const f = (...args: T) => deferred.resolve(args);
         try {
-            cancel?.onCancelled(deferred.reject);
+            cancel?.once(deferred.reject);
             this.once(f);
             return await deferred.promise;
         } finally {
-            cancel?.offCancelled(deferred.reject);
+            cancel?.off(deferred.reject);
             this.off(f);
         }
     }
