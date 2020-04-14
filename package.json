@@ -1,7 +1,6 @@
 {
   "name": "@vwt12eh8/events",
   "version": "1.0.2",
-  "main": "index.js",
   "license": "Unlicense",
   "repository": {
     "type": "git",
@@ -10,13 +9,14 @@
   "publishConfig": {
     "access": "public"
   },
+  "engines": {
+    "node": ">=10.20"
+  },
   "files": [
     "index.d.ts",
     "index.js"
   ],
-  "engines": {
-    "node": ">=10.20"
-  },
+  "main": "index.js",
   "scripts": {
     "test": "mocha test.js"
   },
@@ -28,6 +28,7 @@
     "@types/mocha": "^7.0.2",
     "@types/node": "^10.17.19",
     "mocha": "^7.1.1",
+    "tslint": "^6.1.1",
     "typescript": "^3.8.3"
   }
 }
