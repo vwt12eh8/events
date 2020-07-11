@@ -1,9 +1,9 @@
-import { it, describe } from "mocha";
-import { EventEmitter } from "events";
-import { EventDefine } from ".";
-import { Deferred } from "ts-deferred";
+import { CancelledError, CancelSource } from "@vwt12eh8/cancel";
 import assert = require("assert");
-import { CancelSource, CancelledError } from "@vwt12eh8/cancel";
+import { EventEmitter } from "events";
+import { describe, it } from "mocha";
+import { Deferred } from "ts-deferred";
+import { EventDefine } from ".";
 
 function toCallback(done: (error?: any) => void, f: (...args: any[]) => void | never, ...args: any[]) {
     try {
@@ -18,7 +18,7 @@ describe("on", () => {
     it("multi args", (done) => {
         const event = new EventDefine(new EventEmitter(), Symbol());
         const values = [Symbol(), Symbol()];
-        event.on((...args) => {
+        event.listener.on((...args) => {
             try {
                 assert.strictEqual(values[0], args[0]);
                 assert.strictEqual(values[1], args[1]);
@@ -33,7 +33,7 @@ describe("on", () => {
     it("emit x2", (done) => {
         const event = new EventDefine(new EventEmitter(), Symbol());
         let cnt = 0;
-        event.on(() => cnt++);
+        event.listener.on(() => cnt++);
         event.emit();
         event.emit();
         setImmediate(() => {
@@ -49,8 +49,8 @@ describe("on", () => {
     it("listener x2", async () => {
         const event = new EventDefine(new EventEmitter(), Symbol());
         const deferred = [new Deferred<any[]>(), new Deferred<any[]>()];
-        event.on(() => deferred[0].resolve());
-        event.on(() => deferred[1].resolve());
+        event.listener.on(() => deferred[0].resolve());
+        event.listener.on(() => deferred[1].resolve());
         event.emit();
         await Promise.all(deferred.map((i) => i.promise));
     });
@@ -60,7 +60,7 @@ describe("once", () => {
     it("multi args", (done) => {
         const event = new EventDefine(new EventEmitter(), Symbol());
         const values = [Symbol(), Symbol()];
-        event.once((...args) => {
+        event.listener.once((...args) => {
             try {
                 assert.strictEqual(values[0], args[0]);
                 assert.strictEqual(values[1], args[1]);
@@ -75,7 +75,7 @@ describe("once", () => {
     it("emit x2", (done) => {
         const event = new EventDefine(new EventEmitter(), Symbol());
         let cnt = 0;
-        event.once(() => cnt++);
+        event.listener.once(() => cnt++);
         event.emit();
         event.emit();
         setImmediate(() => {
@@ -91,8 +91,8 @@ describe("once", () => {
     it("listener x2", async () => {
         const event = new EventDefine(new EventEmitter(), Symbol());
         const deferred = [new Deferred<any[]>(), new Deferred<any[]>()];
-        event.once(() => deferred[0].resolve());
-        event.once(() => deferred[1].resolve());
+        event.listener.once(() => deferred[0].resolve());
+        event.listener.once(() => deferred[1].resolve());
         event.emit();
         await Promise.all(deferred.map((i) => i.promise));
     });
@@ -102,8 +102,8 @@ describe("off", () => {
     it("on", (done) => {
         const event = new EventDefine(new EventEmitter(), Symbol());
         const f = () => toCallback(done, assert.fail);
-        event.on(f);
-        event.off(f);
+        event.listener.on(f);
+        event.listener.off(f);
         event.emit();
         setImmediate(done);
     });
@@ -111,8 +111,8 @@ describe("off", () => {
     it("once", (done) => {
         const event = new EventDefine(new EventEmitter(), Symbol());
         const f = () => toCallback(done, assert.fail);
-        event.once(f);
-        event.off(f);
+        event.listener.once(f);
+        event.listener.off(f);
         event.emit();
         setImmediate(done);
     });
@@ -121,13 +121,13 @@ describe("off", () => {
 describe("listen", () => {
     it("listener", (done) => {
         const event = new EventDefine(new EventEmitter(), Symbol());
-        event.listen(() => done()).catch(done);
+        event.listener.listen(() => done()).catch(done);
         event.emit();
     });
 
     it("promise", async () => {
         const event = new EventDefine(new EventEmitter(), Symbol());
-        const promise = event.listen((deferred) => deferred.resolve());
+        const promise = event.listener.listen((deferred) => deferred.resolve());
         event.emit();
         await promise;
     });
@@ -135,7 +135,7 @@ describe("listen", () => {
     it("cancel", (done) => {
         const event = new EventDefine(new EventEmitter(), Symbol());
         const cancel = new CancelSource();
-        event.listen(() => { }, cancel).then(
+        event.listener.listen(() => { }, undefined, cancel).then(
             () => toCallback(done, assert.fail),
             (error) => toCallback(done, assert, error instanceof CancelledError),
         );
@@ -147,7 +147,7 @@ describe("when", () => {
     it("multi args", async () => {
         const event = new EventDefine(new EventEmitter(), Symbol());
         const values = [Symbol(), Symbol()];
-        const promise = event.when();
+        const promise = event.listener.when();
         event.emit(...values);
         const result = await promise;
         assert.strictEqual(values[0], result[0]);
@@ -157,7 +157,7 @@ describe("when", () => {
     it("cancel", (done) => {
         const event = new EventDefine(new EventEmitter(), Symbol());
         const cancel = new CancelSource();
-        event.when(cancel).then(
+        event.listener.when(undefined, cancel).then(
             () => toCallback(done, assert.fail),
             (error) => toCallback(done, assert, error instanceof CancelledError),
         );
