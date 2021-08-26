@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/vwt12eh8/events.git"
   },
-  "license": "CC-BY-4.0",
+  "license": "MIT",
   "files": [
     "EventEmitterTarget.ts",
     "LiteEvent.ts",
