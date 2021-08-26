@@ -6,7 +6,9 @@
     "url": "https://github.com/vwt12eh8/events.git"
   },
   "license": "CC-BY-4.0",
-  "files": [],
+  "files": [
+    "LiteEvent.ts"
+  ],
   "scripts": {
     "test": "ts-node test.ts"
   },
