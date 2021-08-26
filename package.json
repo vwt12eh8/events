@@ -7,6 +7,9 @@
   },
   "license": "CC-BY-4.0",
   "files": [],
+  "scripts": {
+    "test": "ts-node test.ts"
+  },
   "devDependencies": {
     "@types/node": "^12.20.21",
     "ts-node": "^10.2.1",
